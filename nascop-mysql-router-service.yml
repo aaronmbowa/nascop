@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+    - port: 3306
+      name: ro
+    - port: 3307
+      name: rw
+  clusterIP: None
+  selector:
+      name: mysql-router-pod
+      app: nascop

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nascop-mysql-router-deployment
+  labels:
+    app: nascop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: mysql-router-pod
+      app: nascop
+  template:
+    metadata:
+      name: mysql-router-pod
+      labels:
+        name: mysql-router-pod
+        app: nascop
+    spec:
+      containers:
+      - name: mysql
+        image: registry.nascop.org:5000/mysql-router
+        ports:
+        - containerPort: 3306
+          name: ro
+        - containerPort: 3307
+          name: rw
+
