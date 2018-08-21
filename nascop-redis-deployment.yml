@@ -1,4 +1,4 @@
-apiVersion: apps
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nascop-redis-deployment
@@ -27,9 +27,8 @@ spec:
             name: redis-data
         ports:
         - containerPort: 6379
-    volumes:
-     - name: redis-data
-       # This VMDK volume must already exist.
-       vsphereVolume:
-         volumePath: "[DC-DS-DOCKER] dockervols/redis-data"
-         fsType: xfs
+      volumes:
+        - name: redis-data
+        vsphereVolume:
+          volumePath: "[DC-DS-DOCKER] dockvols/redis-data"
+          fsType: xfs
