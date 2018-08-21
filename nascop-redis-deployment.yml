@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: apps
 kind: Deployment
 metadata:
   name: nascop-redis-deployment
@@ -27,14 +27,9 @@ spec:
             name: redis-data
         ports:
         - containerPort: 6379
-volumeClaimTemplates:
-  - metadata:
-      name: redis-data
-      annotations:
-        volume.beta.Kubernetes.io/storage-class: thin-disk
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 5Gi
+    volumes:
+     - name: redis-data
+       # This VMDK volume must already exist.
+       vsphereVolume:
+         volumePath: "[DC-DS-DOCKER] dockervols/redis-data"
+         fsType: xfs
