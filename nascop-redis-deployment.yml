@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nascop-redis-deployment
+  labels:
+    app: nascop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis-pod
+      app: nascop
+  template:
+    metadata:
+      name: redis-pod
+      labels:
+        name: redis-pod
+        app: nascop
+
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        args: ["--appendonly yes"]
+        volumeMounts:
+          - mountPath: /data
+            name: redis-data
+        ports:
+        - containerPort: 6379
+      volumes:
+        - name: redis-data
+          nfs:
+            server: 10.230.50.85
+            path: "/volumes/redis/data"
