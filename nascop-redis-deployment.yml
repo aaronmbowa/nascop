@@ -27,7 +27,14 @@ spec:
             name: redis-data
         ports:
         - containerPort: 6379
-      volumes:
-        - name: redis-data
-          persistentVolumeClaim:
-            claimName: redis-claim
+volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+      annotations:
+        volume.beta.Kubernetes.io/storage-class: thin-disk
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
