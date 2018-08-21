@@ -19,10 +19,12 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: registry.nascop.org:5000/mysql-router
+        image: registry.nascop.org:5000/mysql-router:8.0
         ports:
         - containerPort: 3306
           name: ro
         - containerPort: 3307
           name: rw
+      imagePullSecrets:
+        - name: regsecret
 
