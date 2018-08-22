@@ -29,6 +29,6 @@ spec:
         - containerPort: 6379
       volumes:
         - name: redis-data
-        vsphereVolume:
-          volumePath: "[DC-DS-DOCKER] dockvols/redis-data"
-          fsType: xfs
+        glusterfs:
+          path: "redis-data"
+          endpoints: "glusterfs-cluster"
