@@ -29,6 +29,6 @@ spec:
         - containerPort: 6379
       volumes:
         - name: redis-data
-        glusterfs:
-          path: "redis-data"
-          endpoints: "glusterfs-cluster"
+          glusterfs:
+            path: redis-data
+            endpoints: glusterfs-cluster
