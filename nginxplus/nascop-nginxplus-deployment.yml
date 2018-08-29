@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nascop-nginxplus-deployment
+  labels:
+    app: nascop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginxplus-pod
+      app: nascop
+  template:
+    metadata:
+      name: nginxplus-pod
+      labels:
+        name: nginxplus-pod
+        app: nascop
+
+    spec:
+      containers:
+      - name: nginx
+        image: registry.nascop.org:5000/mynginx:lab-app-kemri-nairobi
+        volumeMounts:
+          - mountPath: /var/www/syncher_dir
+            name: app-data
+          - mountPath: /var/www/performance_dir
+            name: performance-data
+          - mountPath: /var/www/api_dir
+            name: api-data
+          - mountPath: /opt
+            name: amplify-conf-volume
+          - mountPath: /etc/nginx/conf.d
+            name: nginx-default-conf-volume
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "cp /opt/agent.conf /etc/amplify-agent/ && service amplify-agent restart "]
+        ports:
+        - containerPort: 80
+      volumes:
+        - name: performance-data
+          persistentVolumeClaim:
+            claimName: performance-data
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: app-data
+        - name: api-data
+          persistentVolumeClaim:
+            claimName: api-data
+        - name: amplify-conf
+          configMap:
+            name: amplify-conf
+        - name: nginx-default-conf-volume
+          configMap:
+            name: nginx-default-conf
+            items:
+              - key: default.conf
+                path: default.conf
+        - name:  amplify-conf-volume
+          configMap:
+            name:  amplify-conf
+            items:
+              - key: agent.conf
+                path: agent.conf
+
+      imagePullSecrets:
+        - name: regsecret

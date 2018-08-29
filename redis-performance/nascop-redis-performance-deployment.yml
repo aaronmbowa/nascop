@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nascop-redis-deployment
+  name: nascop-redis-performance-deployment
   labels:
     app: nascop
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: redis-pod
+      name: redis-performance-pod
       app: nascop
   template:
     metadata:
-      name: redis-pod
+      name: redis-performance-pod
       labels:
-        name: redis-pod
+        name: redis-performance-pod
         app: nascop
 
     spec:
@@ -24,11 +24,11 @@ spec:
         args: ["--appendonly yes"]
         volumeMounts:
           - mountPath: /data
-            name: redis-data
+            name: redis-performance-data
         ports:
         - containerPort: 6379
       volumes:
-        - name: redis-data
-          glusterfs:
-            path: redis-data
-            endpoints: glusterfs-cluster
+        - name: redis-performance-data
+          persistentVolumeClaim:
+            claimName: redis-performance-data
+          

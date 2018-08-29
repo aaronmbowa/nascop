@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+  labels:
+    app: traefik
+    chart: traefik-1.42.0
+    heritage: Tiller
+    release: my-traefik
+  namespace: nascop
+spec:
+  rules:
+    - host: api-docker.nascop.org
+      http:
+        paths:
+          - backend:
+              serviceName: nginx-api
+              servicePort: 80
+    # This section is only required if TLS is to be enabled for the Ingress

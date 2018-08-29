@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nascop-php-7-deployment
+  labels:
+    app: nascop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: php-7-pod
+      app: nascop
+  template:
+    metadata:
+      name: php-7-pod
+      labels:
+        name: php-7-pod
+        app: nascop
+    spec:
+      containers:
+      - name: php-7
+        image: mwendakith/lab:1.5
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "cd /var/www/syncher_dir/syncher && git pull && cp /opt/syncher/.env .env && composer install && php artisan key:generate &&  php artisan jwt:secret && cd /var/www/performance_dir/performance && git pull && cp /opt/performance/.env.performance .env && composer install && php artisan key:generate &&  php artisan jwt:secret &&  cd /var/www/api_dir/api && git pull && cp /opt/api/.env.api .env && composer install && php artisan key:generate &&  php artisan jwt:generate && chmod 0777 -R /var/www/*/*/storage &&  chmod 0777 -R /var/www/*/*/public &&  chmod 0777 -R /var/www/*/*/vendor &&  chmod 0777 -R /var/www/*/*/bootstrap "]
+        volumeMounts:
+          - mountPath: /var/www/syncher_dir
+            name: app-data
+          - mountPath: /var/www/performance_dir
+            name: performance-data
+          - mountPath: /var/www/api_dir
+            name: api-data
+          - name: syncher-env-volume
+            mountPath: /opt/syncher
+          - name: performance-env-volume
+            mountPath: /opt/performance
+          - name: api-env-volume
+            mountPath: /opt/api
+        ports:
+          - containerPort: 9000
+      volumes:
+        - name: performance-data
+          persistentVolumeClaim:
+            claimName: performance-data
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: app-data
+        - name: api-data
+          persistentVolumeClaim:
+            claimName: api-data
+        - name: syncher-env-volume
+          configMap:
+            name: syncher-env-file
+            items:
+              - key: .env
+                path: .env
+        - name: performance-env-volume
+          configMap:
+            name: performance-env-file
+            items:
+              - key: .env.performance
+                path: .env.performance
+        - name: api-env-volume
+          configMap:
+            name: api-env-file
+            items:
+              - key: .env.api
+                path: .env.api
+      imagePullSecrets:
+        - name: regsecret

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-performance
+spec:
+  ports:
+    - port: 6379
+      name: redis-performance
+  clusterIP: None
+  selector:
+      name: redis-performance-pod
+      app: nascop
